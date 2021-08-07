@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
 import { body, check, validationResult } from "express-validator";
-import { Applicable } from "src/shared/enums/Applicable";
+import { Applicable } from "./enums/applicable";
 import { WebToken } from "src/shared/webtoken";
 
 

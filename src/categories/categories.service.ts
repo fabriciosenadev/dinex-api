@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CategoriesUsersService } from "src/categories-users/categories-users.service";
-import { IsCustom } from "src/shared/enums/IsCustom";
+import { IsCustom } from "./enums/iscustom";
 import { Category } from "./category.entity";
 import { CategoryRepository } from "./category.repository";
 

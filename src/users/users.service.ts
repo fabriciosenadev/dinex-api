@@ -9,9 +9,15 @@ export class UsersService {
         @InjectRepository(User) private userRepository: UserRepository
     ) { }
 
-    async createUser(newUser: User) {
+    public async createUser(newUser: User) {
+        newUser.is_active = false;
         const user = await this.userRepository.create(newUser);
         await this.userRepository.save(user);
+        user.password = null;
         return user;
+    }
+
+    public async getUserByEmail(email: string) {
+        return await this.userRepository.findOne({ email });
     }
 }

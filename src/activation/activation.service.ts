@@ -14,8 +14,9 @@ export class ActivationService {
     public async activateUser(email: string, activationCode: string) {
         const user = await this.usersService.getUserByEmail(email);
         const registeredCode = await this.getActivationCode(user.id);
-
-        if (registeredCode.activation_code !== activationCode) {
+        const index = registeredCode.length - 1;
+        
+        if (registeredCode[index].activation_code !== activationCode) {
             throw new HttpException({ status: 400, error: "Invalid activation code" }, HttpStatus.BAD_REQUEST);
         }
 
@@ -23,7 +24,7 @@ export class ActivationService {
         await this.usersService.updateUser(user);
 
         await this.clearActivationCodes(user.id);
-        
+
         return {};
     }
 
@@ -38,13 +39,13 @@ export class ActivationService {
     }
 
     private async getActivationCode(userId: string) {
-        return await this.activationRepository.findOne({
+        return await this.activationRepository.find({
             user_id: userId
         });
     }
 
     private async setActivationCode(userId: string, activationCode: string) {
-        
+
         const activation = await this.activationRepository.create({
             user_id: userId,
             activation_code: activationCode

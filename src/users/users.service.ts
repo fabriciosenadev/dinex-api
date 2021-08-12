@@ -17,6 +17,12 @@ export class UsersService {
         return user;
     }
 
+    public async updateUser(user: User) {
+        await this.userRepository.save(user);
+        user.password = null;
+        return user;
+    }
+
     public async getUserByEmail(email: string) {
         return await this.userRepository.findOne({ email });
     }

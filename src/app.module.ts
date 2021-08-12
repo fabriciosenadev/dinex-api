@@ -11,6 +11,8 @@ import { Category } from './categories/category.entity';
 import { CategoriesUsersModule } from './categories-users/categories-users.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoryUser } from './categories-users/category-user.entity';
+import { ActivationModule } from './activation/activation.module';
+import { Activation } from './activation/activation.entity';
 
 @Module({
     imports: [
@@ -23,7 +25,7 @@ import { CategoryUser } from './categories-users/category-user.entity';
                 :"./dist/database/dinex.db",
             logging: true,
             synchronize: true,
-            entities: [User, Category, CategoryUser],
+            entities: [User, Category, CategoryUser, Activation],
             migrationsTableName: 'migrations_table',
             migrations: [
                "./src/database/migrations/**.ts"
@@ -36,7 +38,8 @@ import { CategoryUser } from './categories-users/category-user.entity';
         UsersModule,
         CategoriesModule,
         CategoriesUsersModule,
-        AuthModule
+        AuthModule,
+        ActivationModule
     ],
     // controllers: [AppController],
     // providers: [AppService],

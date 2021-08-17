@@ -1,5 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { CategoriesService } from "src/categories/categories.service";
+import { EmailService } from "src/email/email.service";
 import { UsersService } from "src/users/users.service";
 import { Repository } from "typeorm";
 import { Activation } from "./activation.entity";
@@ -8,21 +10,25 @@ import { Activation } from "./activation.entity";
 export class ActivationService {
     constructor(
         @InjectRepository(Activation) private readonly activationRepository: Repository<Activation>,
-        private readonly usersService: UsersService
+        private readonly usersService: UsersService,
+        private readonly emailService: EmailService,
+        private readonly categoryService: CategoriesService,
     ) { }
 
     public async activateUser(email: string, activationCode: string) {
         const user = await this.usersService.getUserByEmail(email);
         const registeredCode = await this.getActivationCode(user.id);
         const index = registeredCode.length - 1;
-        
+
         if (registeredCode[index].activation_code !== activationCode) {
-            throw new HttpException({ status: 400, error: "Invalid activation code" }, HttpStatus.BAD_REQUEST);
+            throw new HttpException({ status: 400, error: "Código de ativação inválido" }, HttpStatus.BAD_REQUEST);
         }
 
         user.is_active = true;
         await this.usersService.updateUser(user);
 
+        await this.categoryService.bindStandardCategories(user.id);
+        
         await this.clearActivationCodes(user.id);
 
         return {};
@@ -32,10 +38,8 @@ export class ActivationService {
         const user = await this.usersService.getUserByEmail(email);
         const activationCode = await this.generateActivationCode();
         await this.setActivationCode(user.id, activationCode);
-
-        // await this.usersService.sendActivationEmail(email, activationUrl);
-
-        return activationCode; // temporary
+        
+        return await this.emailService.sendActivationEmail(activationCode, user.full_name, email);
     }
 
     private async getActivationCode(userId: string) {
@@ -58,7 +62,6 @@ export class ActivationService {
             user_id: userId
         });
     }
-
 
     private async generateActivationCode() {
         var arr = [];

@@ -24,6 +24,12 @@ export class ActivationService {
             throw new HttpException({ status: 400, error: "Código de ativação inválido" }, HttpStatus.BAD_REQUEST);
         }
 
+        const limitExpireMinutes = 120;
+        const currentMinutesToExpire = await this.getMinutesDiffToNow(registeredCode[index].created_at);
+        if(currentMinutesToExpire > limitExpireMinutes){
+            throw new HttpException({ status: 400, error: "Código de ativação expirado" }, HttpStatus.BAD_REQUEST);
+        }
+
         user.is_active = true;
         await this.usersService.updateUser(user);
 
@@ -71,5 +77,12 @@ export class ActivationService {
         }
         const code = arr.join('');
         return code;
+    }
+
+    private async getMinutesDiffToNow(creationDate: Date){
+        const now = new Date();
+        const diff = now.valueOf() - creationDate.valueOf();
+        const diffInMinutes = Math.floor((diff / 1000) / 60);
+        return diffInMinutes;
     }
 }

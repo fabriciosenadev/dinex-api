@@ -5,20 +5,19 @@ import { Injectable } from "@nestjs/common";
 export class EmailService {
     constructor(private readonly mailerService: MailerService) { }
 
-    public async sendActivationEmail(activationCode: string, fullName: string, to: string) {      
+    public async sendActivationEmail(activationCode: string, fullName: string, to: string) {
         const mailBoxName = process.env.EMAIL_NAME;
         const mailBoxAddress = '<' + process.env.EMAIL_ADDRESS + '>';
         const from = `${mailBoxName} ${mailBoxAddress}`;
-        
+
         const subject = 'Ativação de Usuário ✔';
-        
+
         const templatePath = process.env.TEMPLATE_PATH;
         const template = `${templatePath}activationUser`;
-        
+
         const name = fullName.split(' ')[0];
 
-        let result;
-        this
+        return this
             .mailerService
             .sendMail({
                 to,
@@ -30,11 +29,7 @@ export class EmailService {
                     activationCode
                 }
             })
-            .then((success) => {
-                result = success;
-            }).catch((err) => {
-                result = err;
-            });
-            return result;
+            .then((success) => success)
+            .catch((err) => err);
     }
 }

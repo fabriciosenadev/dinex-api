@@ -16,6 +16,10 @@ import { Activation } from './activation/activation.entity';
 import { EmailModule } from './email/email.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { LaunchesModule } from './launches/launches.module';
+import { Launch } from './launches/launch.entity';
+import { PayMethodLaunchModule } from './pay-method-launch/pay-method-launch.module';
+import { PayMethodLaunch } from './pay-method-launch/pay-method-launch.entity';
 
 @Module({
     imports: [
@@ -49,7 +53,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
                     : "./dist/database/dinex.db",
             logging: true,
             synchronize: true,
-            entities: [User, Category, CategoryUser, Activation],
+            entities: [User, Category, CategoryUser, Activation, Launch, PayMethodLaunch],
             migrationsTableName: 'migrations_table',
             migrations: [
                 "./src/database/migrations/**.ts"
@@ -64,7 +68,9 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         CategoriesUsersModule,
         AuthModule,
         ActivationModule,
-        EmailModule
+        EmailModule,
+        LaunchesModule,
+        PayMethodLaunchModule,
     ],
     // controllers: [AppController],
     // providers: [AppService],
